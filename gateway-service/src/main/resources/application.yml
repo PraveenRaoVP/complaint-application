@@ -1,0 +1,40 @@
+server:
+  port: 9095
+spring:
+  application:
+    name: API-Gateway
+  servlet:
+    multipart:
+      max-file-size: 15GB
+      max-request-size: 15GB
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: User-Service
+          predicates:
+            - Path=/auth/**
+          uri: http://localhost:8080/
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8085/eureka
+  instance:
+    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 30
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      jwtExpirationInMs: 86400000
+
+endpoint:
+  user-service: http://localhost:8080

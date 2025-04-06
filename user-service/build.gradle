@@ -1,0 +1,104 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id "io.freefair.lombok" version "8.6"
+	id "jacoco"
+}
+
+group = 'com.caged'
+version = '0.0.1-SNAPSHOT'
+
+def springVersion = '3.4.4'
+def jacksonVersion = '2.17.0'
+def liquibaseVersion = '4.27.0'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+	mavenCentral()
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+	reportsDirectory = layout.buildDirectory.dir('jacocoTestReport')
+}
+
+configurations {
+	testCompile
+	testRuntime
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = false
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+	implementation('org.springframework.boot:spring-boot-starter-web') {
+		exclude module: "spring-boot-starter-tomcat"
+	}
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jetty', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springVersion
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: springVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: springVersion
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation group: 'org.liquibase', name: 'liquibase-core', version: liquibaseVersion
+
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
+	implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-jaxb-annotations', version: jacksonVersion
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+
+	implementation group: 'com.vladmihalcea', name: 'hibernate-types-60', version: '2.21.1'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.3'
+	implementation "io.jsonwebtoken:jjwt-api:0.11.5"
+	implementation "io.jsonwebtoken:jjwt-impl:0.11.5"
+	implementation "io.jsonwebtoken:jjwt-jackson:0.11.5"
+	implementation 'org.json:json:20210307'
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0"
+	implementation group: 'de.codecentric', name: 'spring-boot-admin-starter-client', version: '3.2.3'
+
+//	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.720'
+//	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.720'
+//	implementation 'com.amazonaws:aws-java-sdk-bom:1.12.720'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.1.2'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+processResources {
+	filesMatching('**/application.yml') {
+		filter {
+			it.replace('%APP_VERSION_TOKEN%', version)
+		}
+	}
+}

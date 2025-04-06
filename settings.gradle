@@ -1,0 +1,4 @@
+rootProject.name = 'complaint-application'
+include 'gatewayservice'
+include 'eurekaservice'
+include 'userservice'
